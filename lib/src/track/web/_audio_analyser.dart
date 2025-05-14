@@ -1,6 +1,7 @@
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 import 'dart:math' as math;
+import 'package:js/js_util.dart' as js_util;
 
 import 'package:dart_webrtc/dart_webrtc.dart' show MediaStreamWeb;
 import 'package:web/web.dart' as web;
@@ -84,8 +85,10 @@ AudioAnalyser? createAudioAnalyser(
 
   /// Calculates the current volume of the track in the range from 0 to 1
   double calculateVolume() {
-    JSUint8Array dataArray =
-        JSUint8Array.withLength(analyser.frequencyBinCount);
+    final dataArray = js_util.callConstructor(
+      js_util.getProperty(web.window, 'Uint8Array'),
+      [analyser.frequencyBinCount],
+    ) as JSUint8Array;
 
     analyser.getByteFrequencyData(dataArray);
     num sum = 0;

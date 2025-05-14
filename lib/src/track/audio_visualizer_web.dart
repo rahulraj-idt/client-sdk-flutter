@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:js_interop';
 import 'dart:math' as math;
 import 'dart:typed_data';
+import 'package:js/js_util.dart' as js_util;
+import 'package:web/web.dart' as web;
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
@@ -54,7 +56,10 @@ class AudioVisualizerWeb extends AudioVisualizer {
       Duration(milliseconds: options.updateInterval!.toInt()),
       (timer) {
         try {
-          var tmp = JSFloat32Array.withLength(bufferLength ?? 0);
+          var tmp = js_util.callConstructor(
+            js_util.getProperty(web.window, 'Float32Array'),
+            [bufferLength ?? 0],
+          ) as JSFloat32Array;
           _audioAnalyser?.analyser.getFloatFrequencyData(tmp);
           Float32List frequencies = Float32List(tmp.toDart.length);
           for (var i = 0; i < tmp.toDart.length; i++) {
